@@ -1,8 +1,11 @@
 const messagesDiv = document.getElementById("messages");
 const messageInput = document.getElementById("messageInput");
 const sendBtn = document.getElementById("sendBtn");
+const loginBtn = document.getElementById("loginBtn");
+const usernameInput = document.getElementById("username");
+const passwordInput = document.getElementById("password");
 
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "http://localhost:3000/chat";
 
 // Fetch all messages from the server and display them
 function fetchMessages() {
@@ -36,6 +39,31 @@ function sendMessage() {
         console.error("Error sending message:", err);
     });
 }
+
+loginBtn.addEventListener("click", () => {
+    const username = usernameInput.value;
+    const password = passwordInput.value;
+
+    fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username: username, password: password })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message === "Logged in successfully") {
+            alert("Logged in!");
+            // You can add code here to show/hide relevant sections.
+        } else {
+            alert("Invalid credentials. Please try again.");
+        }
+    })
+    .catch(err => {
+        console.error("Error logging in:", err);
+    });
+});
 
 sendBtn.addEventListener("click", sendMessage);
 
