@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-// In-memory messages store
+// Modify the message structure to include the username
 const messages = [];
 
 router.get('/messages', (req, res) => {
@@ -9,11 +9,13 @@ router.get('/messages', (req, res) => {
 });
 
 router.post('/messages', (req, res) => {
-    const message = req.body.message;
-    if (!message) {
-        return res.status(400).send('Message content is required');
+    const { message, username } = req.body;
+    
+    if (!message || !username) {
+        return res.status(400).send('Both message content and username are required');
     }
-    messages.push(message);
+    
+    messages.push({ username, message });
     res.status(201).send('Message added');
 });
 

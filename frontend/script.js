@@ -7,12 +7,14 @@ const passwordInput = document.getElementById("password");
 
 const BASE_URL = "http://localhost:3000/chat";
 
+let loggedInUser = null;
+
 // Fetch all messages from the server and display them
 function fetchMessages() {
     fetch(BASE_URL + "/messages")
         .then(response => response.json())
         .then(data => {
-            messagesDiv.innerHTML = data.map(message => `<p>${message}</p>`).join("");
+            messagesDiv.innerHTML = data.map(msg => `<p>${msg.username}: ${msg.message}</p>`).join("");
         })
         .catch(err => {
             console.error("Error fetching messages:", err);
@@ -21,6 +23,11 @@ function fetchMessages() {
 
 // Send a new message to the server
 function sendMessage() {
+    if (!loggedInUser) {
+        alert("You must be logged in to send messages.");
+        return;
+    }
+
     const message = messageInput.value;
     if (message.trim() === "") return;
 
@@ -29,7 +36,7 @@ function sendMessage() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ message: message })
+        body: JSON.stringify({ message: message, username: loggedInUser })
     })
     .then(() => {
         messageInput.value = "";
@@ -55,7 +62,8 @@ loginBtn.addEventListener("click", () => {
     .then(data => {
         if (data.message === "Logged in successfully") {
             alert("Logged in!");
-            // You can add code here to show/hide relevant sections.
+            loggedInUser = username;
+            // You can add code here to hide the login form and show the chat.
         } else {
             alert("Invalid credentials. Please try again.");
         }
