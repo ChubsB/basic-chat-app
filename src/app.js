@@ -1,15 +1,19 @@
 const express = require('express');
+const path = require('path');
+const cors = require('cors');
 const app = express();
 const PORT = 3000;
 
 // Middlewares
+app.use(cors());
 app.use(express.json());  // To parse JSON body
+app.use(express.static(path.join(__dirname, '../frontend')));
 
 // In-memory messages store
 const messages = [];
 
 app.get('/', (req, res) => {
-    res.send('Hello, Chat App!');
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
 app.get('/messages', (req, res) => {
@@ -29,4 +33,4 @@ app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-module.exports = app;
+module.exports = app; // for further usage and testing
